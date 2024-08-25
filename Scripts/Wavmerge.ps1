@@ -1,4 +1,4 @@
-Write-Output "Starting mp4 file merge"
+﻿Write-Output "Starting .wav file merge"
 $files = Get-ChildItem  Rand_Ord_DL
 $OriginPath = Get-Location
 #Create ."C:\Users\BigMa\RadioHead\Scripts\Rand_Ord_DL\5283RNDAOlivia_Rodrigo_-_The_Making_of_'obsessed'_(Vevo_Footnotes)_[Udte0tu7IZw].wav" file if needed, otherwise clear file
@@ -19,8 +19,8 @@ Write-Output "Writing to Wav_Merge_File_Names.txt"
 
 foreach($file in $files){
 
-    #If file is of format .mp4 then add name to txt file
-    if($file.Name -match ".mp4"){
+    #If file is of format .wav then add name to txt file
+    if($file.Name -match ".wav"){
         Write-Output "File below added to Wav_Merge_File_Names.txt 'n$($File.Name)"
         Add-Content Wav_Merge_File_Names.txt "file 'Rand_Ord_DL/$($file.Name)'"
         #Write-Output "file 'Rand_Ord_DL/$($file.Name)'" >> Wav_Merge_File_Names.txt
@@ -69,11 +69,6 @@ New-Item info.txt
 foreach($file in $files){
     Add-Content "info.txt" $file.Name
 }
-#Added "-bsf:a aac_adtstoasc" to resolve time stamp issue, idk what it does lol,
-#ffmpeg -f concat -safe 0  -i $ScriptPath/Wav_Merge_File_Names.txt -c copy -bsf:a aac_adtstoasc RadioOut.mp4
 
-ffmpeg -safe 0 -f concat  -segment_time_metadata 1 -i $ScriptPath/Wav_Merge_File_Names.txt -vf select=concatdec_select -af aselect=concatdec_select,aresample=async=1 RadioOut.mp4
-
-#Code that fixed Non-Monotonic DTS for someone else
-#ffmpeg -safe 0 -f concat -segment_time_metadata 1 -i file.txt -vf select=concatdec_select -af aselect=concatdec_select,aresample=async=1 out.mp
+ffmpeg -f concat -safe 0 -i $ScriptPath/Wav_Merge_File_Names.txt -c copy RadioOut.wav
 cd $OriginPath

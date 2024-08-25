@@ -1,5 +1,5 @@
-#DOWNLOADS VIDEOS IN ..mp4 FORMAT TO FILE DIRECTORY RAND_ORD_DL AND ADDS 4 RANDOM NUMBERS IN FRONT OF EACH FILE AS WELL AS RAND TAG 
-#IGNORES ANY FILE WITHOUT .,mp4 EXTENSION
+﻿#DOWNLOADS VIDEOS IN .WAV FORMAT TO FILE DIRECTORY RAND_ORD_DL AND ADDS 4 RANDOM NUMBERS IN FRONT OF EACH FILE AS WELL AS RAND TAG 
+#IGNORES ANY FILE WITHOUT .WAV EXTENSION
 #INPUT: URL OF VIDEO OR PLAYLIST TO DOWNLOAD
 
 
@@ -26,7 +26,7 @@ Write-Output "DownRandURL: " $URL
 
 foreach($SingleUrl in ($URL -split " ")){
     $SingleURL
-    yt-dlp -f mp4 $SingleURL
+    yt-dlp -x --audio-format wav $SingleURL
 }
 #$URL    
 #yt-dlp -x --audio-format wav $URL
@@ -41,13 +41,13 @@ foreach($file in $files){
    }
 
    #Give 4 digit number to beginning of file in order to effectively randomize storage
-
    #Gets rid of spacing to help later code, also appends RAND to help later identify file
    else{
         Write-Output "Appending Random Number and RAND in front of file as well as deleting spacing 'n$($file.name)"
         $randomNum = Get-Random -Minimum 1000 -Maximum 9999
         $newFileName = "$($randomNum)RNDA$($file.Name)"
-        $newFileName = $newFileName -replace '[^a-zA-Z0-9_\-\.]', '_'
+        $newFileName = $newFileName -replace " ", "_"
+        $newFileName = $newFileName -replace "'", "_"
         $file | Rename-Item -NewName $newFileName
    }
 }
