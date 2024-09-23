@@ -39,7 +39,10 @@ foreach($file in $files){
         Write-Output "Appending Random Number and RAND in front of file as well as deleting spacing 'n$($file.name)"
         $randomNum = Get-Random -Minimum 1000 -Maximum 9999
         $newFileName = "$($randomNum)RNDA$($file.Name)"
+
+        #Gets rid of all non-normal characters
         $newFileName = $newFileName -replace " ", "_"
+        $newFileName = $newFileName -replace "[^A-Za-z0-9._]", ""
         $file | Rename-Item -NewName $newFileName
    }
 }
