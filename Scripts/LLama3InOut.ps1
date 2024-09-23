@@ -30,7 +30,10 @@ ollama run llama3:8b "I will input a file name which starts with 4n numbers and 
 #Removes first 3 lines as they are non-existent errors
 $txtlines = Get-Content TempRadioHostText.txt
 $txtlines = $txtlines | Where-Object { $_ -ne $txtlines[0] -and $_ -ne $txtlines[1] -and $_ -ne $txtlines[2] }
+$txtlines = $txtlines -replace "[`"`']", ""
 $txtlines | Set-Content TempRadioHostText.txt
+$txtlines = Get-Content TempRadioHostText.txt -Raw
+python ..\ElevenLabsIntegration\11LabsTTS.py $txtlines
 
 
 

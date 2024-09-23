@@ -18,7 +18,6 @@ with json_file_path.open('r') as json_file:
 
 # Access the API key
 api_key = config_data.get('apiKey')
-print(f"API Key: {api_key}")
 
 ############################################################################################################################
 # An API key is defined here. You'd normally get this from the service you're accessing. It's a form of authentication.
