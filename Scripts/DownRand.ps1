@@ -42,6 +42,8 @@ foreach($file in $files){
 
         #Gets rid of all non-normal characters
         $newFileName = $newFileName -replace " ", "_"
+        #Gets rid of ending brackets part of file
+        $newFileName = $newFileName -replace "\[[^\]]*\]"
         $newFileName = $newFileName -replace "[^A-Za-z0-9._]", ""
         $file | Rename-Item -NewName $newFileName
    }
