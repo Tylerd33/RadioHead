@@ -6,7 +6,7 @@ param(
 )
 
 
-rm TTSMerge
+rm -Recurse TTSMerge
 New-Item -Itemtype Directory TTSMerge
 
 #OriginalFIleName
@@ -62,7 +62,7 @@ rm ./TTSMerge/TTS.wav
 
 #Moves TTS to Rand_Ord_DL to be merged later by Wavmerge.ps1
 #Names TTS to name of other file except adds a 1 before the last letter so it it right in front of the song it will be introducing
-$ogfilename = $ogfilename.Substring(0, 8) + "1" + $ogfilename.Substring()
+$ogfilename = $ogfilename.Substring(0, 8) + "1" + $ogfilename.Substring(8)
 Rename-Item -Path ./TTSMerge/TTSF.wav -NewName $ogfilename
 Move-Item -Path ./TTSMerge/$ogfilename -Destination ./Rand_Ord_DL
 

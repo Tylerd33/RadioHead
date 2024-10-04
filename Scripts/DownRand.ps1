@@ -12,7 +12,7 @@ param (
 #Create directory to store merge if not exist
 if(Test-Path -Path Rand_Ord_DL){
     Write-Output "Rand_Ord_DL Path exists... deleting and recreating"
-    rm Rand_Ord_DL
+    rm -Recurse Rand_Ord_DL
     New-Item -Itemtype "directory" Rand_Ord_DL
 }
 else{
