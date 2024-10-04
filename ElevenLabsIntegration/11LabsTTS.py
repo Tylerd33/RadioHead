@@ -31,7 +31,7 @@ api_key = config_data.get('apiKey')
 # Define constants for the script
 CHUNK_SIZE = 1024  # Size of chunks to read/write at a time
 XI_API_KEY = api_key  # Your API key for authentication
-VOICE_ID = "XB0fDUnXU5powFXDhCwa"  # ID of the voice model to use
+VOICE_ID = "91VPGP9GxaGsMq0QiNd3"  # ID of the voice model to use
 TEXT_TO_SPEAK = input_value  # Text you want to convert to speech
 OUTPUT_PATH = "TTSMerge/TTS.wav"  # Path to save the output audio file
 

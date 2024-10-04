@@ -46,10 +46,26 @@ foreach($file in $files){
         $newFileName = $newFileName -replace "\[[^\]]*\]"
         $newFileName = $newFileName -replace "[^A-Za-z0-9._]", ""
         $file | Rename-Item -NewName $newFileName
+
+        #If string in index 3 is either 8 or 9 then creates a radio host introduction
+        if($newFileName[3] -match '[89]'){
+            cd ..
+            ./LLama3InOut.ps1 -filename $newFileName
+            cd Rand_Ord_DL
+        }
+
+        #Converts .wav file to a standard format to ensure proper concatenation later
+        $newerFileName = $newFileName.Substring(0, 8) + "s" + $newFileName.Substring(8)
+        ffmpeg -i $newFileName -ar 44100 -ac 2 -sample_fmt s16 $newerFileName
+        rm $newFilename
    }
 }
 cd ..
 Write-Output "Files downloaded and randomized sort`n`n"
+
+
+
+
 
 #Runs Script that Merges Files
 .\WavMerge.ps1
