@@ -1,33 +1,40 @@
-﻿#DOWNLOADS VIDEOS IN .WAV FORMAT TO FILE DIRECTORY RAND_ORD_DL AND ADDS 4 RANDOM NUMBERS IN FRONT OF EACH FILE AS WELL AS RAND TAG 
-#IGNORES ANY FILE WITHOUT .WAV EXTENSION
-#INPUT: URL OF VIDEO OR PLAYLIST TO DOWNLOAD
+﻿'DOWNLOADS VIDEOS IN .WAV FORMAT TO FILE DIRECTORY RAND_ORD_DL AND ADDS 4 RANDOM NUMBERS IN FRONT OF EACH FILE AS WELL AS RAND TAG 
+IGNORES ANY FILE WITHOUT .WAV EXTENSION
+INPUT: URL OF VIDEO OR PLAYLIST TO DOWNLOAD
+'
 
-
-
+#URLs to downlaod as input
 param (
-    [string]$URL
+    [string]$MediaURL,
+    [string]$AdURL
     )
 
 
-#Create directory to store merge if not exist
+#Create directory to store merge if not exist, otherwise clears directory
 if(Test-Path -Path Rand_Ord_DL){
     Write-Output "Rand_Ord_DL Path exists... deleting and recreating"
     rm -Recurse Rand_Ord_DL
     New-Item -Itemtype "directory" Rand_Ord_DL
 }
+
 else{
     Write-Output "Rand_Ord_DL Path does not exist, creating..."
     New-Item -Itemtype "directory" Rand_Ord_DL
 }
-#Go to direct0ry
+
+#Go to directory with downloaded media
 cd Rand_Ord_DL
+
 #Download Playlist in Current Directory    
 yt-dlp -x --audio-format wav "$($URL)"
 
-#Go through every File in Directory and rename the file to have random numbers in front
 $files = Get-ChildItem -File
 
 foreach($file in $files){
+'
+Goes through every File in Directory and rename the file to have random numbers in front
+'
+
     #Skip file if RNDA in file name
     if($file.Name -match "RNDA"){
         Write-Output "RNDA Match found for file with name:'n $($file.Name)'n 'nWill not touch file"
@@ -40,9 +47,10 @@ foreach($file in $files){
         $randomNum = Get-Random -Minimum 1000 -Maximum 9999
         $newFileName = "$($randomNum)RNDA$($file.Name)"
 
-        #Gets rid of all non-normal characters
+        #Gets rid of all non-normal characters in order to not bug out 3rd party tools
         $newFileName = $newFileName -replace " ", "_"
-        #Gets rid of ending brackets part of file
+
+        #Gets rid of ending brackets part of file in order to not bug out 3rd party tools
         $newFileName = $newFileName -replace "\[[^\]]*\]"
         $newFileName = $newFileName -replace "[^A-Za-z0-9._]", ""
         $file | Rename-Item -NewName $newFileName
@@ -62,10 +70,6 @@ foreach($file in $files){
 }
 cd ..
 Write-Output "Files downloaded and randomized sort`n`n"
-
-
-
-
 
 #Runs Script that Merges Files
 .\WavMerge.ps1

@@ -1,6 +1,12 @@
-﻿Write-Output "Starting .wav file merge"
+﻿'
+Merges all files and create output files, folders, and info file
+'
+
+
+Write-Output "Starting .wav file merge"
 $files = Get-ChildItem  Rand_Ord_DL
 $OriginPath = Get-Location
+
 #Create ."C:\Users\BigMa\RadioHead\Scripts\Rand_Ord_DL\5283RNDAOlivia_Rodrigo_-_The_Making_of_'obsessed'_(Vevo_Footnotes)_[Udte0tu7IZw].wav" file if needed, otherwise clear file
 if(Test-Path -Path Wav_Merge_File_Names.txt){
     Write-Output "Wav_Merge_File_Names.txt found, clearing file..."
@@ -14,10 +20,14 @@ else{
 }
 
 
-#Goes through every file
+
 Write-Output "Writing to Wav_Merge_File_Names.txt"
 
 foreach($file in $files){
+    '
+    Goes through every file in RAND_ORD_DL and adds to "Wav_Merge_File_Names.txt" in order use ffmpeg to merge all files
+    '
+
 
     #If file is of format .wav then add name to txt file
     if($file.Name -match ".wav"){
@@ -29,9 +39,12 @@ foreach($file in $files){
         Write-Output "file below does not match file extension, not including in merge `n$($File.Name)"
     }
 }
+
+
 $ScriptPath = Get-Location
-#Merge files into one file
-Write-OutPut "Attempting final merge"
+Write-Output "Creating directory layout / info file"
+
+#Creates directory layout using time to organize folders
 cd ..
 if(Test-Path -Path CustomRadios){
     cd CustomRadios
@@ -65,10 +78,14 @@ $CurrentTime = $(Get-Date -Format "MM_dd_yyyy_HH.mm")
 New-Item -Itemtype "directory" $CurrentTime
 cd $CurrentTime
 
+#Creates info file using all current files
 New-Item info.txt
 foreach($file in $files){
     Add-Content "info.txt" $file.Name
 }
 
+Write-OutPut "Attempting final merge"
+
+#Concatenates All file and places in correct folder
 ffmpeg -f concat -safe 0 -i $ScriptPath/Wav_Merge_File_Names.txt -c copy RadioOut.wav
 cd $OriginPath
