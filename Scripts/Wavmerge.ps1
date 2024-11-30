@@ -2,9 +2,20 @@
 Merges all files and create output files, folders, and info file
 '
 
-
 Write-Output "Starting .wav file merge"
-$files = Get-ChildItem  Rand_Ord_DL
+
+#Moves all files to RAND_ORD_DL
+cd RAND_ORD_DL
+# Get all .wav files from all subdirectories of the current directory
+$wavFiles = Get-ChildItem -Path . -Recurse -Filter "*.wav" -File
+# Move each .wav file to the current directory
+foreach ($file in $wavFiles) {
+    Move-Item -Path $file.FullName -Destination . -Force
+}
+Write-Host "All .wav files have been moved to the current directory."
+cd ..
+
+$files = Get-ChildItem  -Recurse -Filter *.wav Rand_Ord_DL
 $OriginPath = Get-Location
 
 #Create ."C:\Users\BigMa\RadioHead\Scripts\Rand_Ord_DL\5283RNDAOlivia_Rodrigo_-_The_Making_of_'obsessed'_(Vevo_Footnotes)_[Udte0tu7IZw].wav" file if needed, otherwise clear file
@@ -31,8 +42,8 @@ foreach($file in $files){
 
     #If file is of format .wav then add name to txt file
     if($file.Name -match ".wav"){
-        Write-Output "File below added to Wav_Merge_File_Names.txt 'n$($File.Name)"
-        Add-Content Wav_Merge_File_Names.txt "file 'Rand_Ord_DL/$($file.Name)'"
+        Write-Output "File below added to Wav_Merge_File_Names.txt 'n$($File.FullName)"
+        Add-Content Wav_Merge_File_Names.txt "file '$($file.FullName)'"
         #Write-Output "file 'Rand_Ord_DL/$($file.Name)'" >> Wav_Merge_File_Names.txt
     }
     else{
