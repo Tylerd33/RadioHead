@@ -26,18 +26,21 @@ else{
 #Go to directory with downloaded media
 cd Rand_Ord_DL
 
-#
+#Should always be more Media then Ads
 if($AdShuffle){
     Write-Output "Shuffling Media"
+    $MediaCountD = .\..\OrganizedDownloader -URLList $AdURL -FileType "Ad" -AdShuffle $True
     .\..\OrganizedDownloader -URLList $MediaURL -FileType "Media" -AdShuffle $True
+    
 }
 else{
     #Downloads ad videos numbered 1 - 1000
     #Only Works with individual Media (Not Playlists)
-    $MediaCountD = .\..\OrganizedDownloader -URLList $MediaURL -FileType "Media" -AdShuffle $False | Select-Object -Last 1
+    $MediaCountD = .\..\OrganizedDownloader -URLList $AdURL -FileType "Ad" -AdShuffle $False | Select-Object -Last 1
+    .\..\OrganizedDownloader -URLList $MediaURL -FileType "Media" -AdShuffle $True -LastMediaCount $MediaCountD
 }
 
-.\..\OrganizedDownloader -URLList $AdURL -FileType "Ad" -AdShuffle $True -LastMediaCount $MediaCountD
+
 
 #LEGACY(OLD)
 #Download Playlist in Current Directory    

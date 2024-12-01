@@ -7,7 +7,9 @@ param(
     [bool]$AdShuffle,
     [int]$LastMediaCount = 0
 )
-Set-PSBreakpoint -Script "../OrganizedDownloader.ps1" -Line 47
+
+#Set-PSBreakpoint -Script "../OrganizedDownloader.ps1" -Line 47
+
 # Creates Directory and goes to it
 New-Item -ItemType "directory" -Name $FileType
 cd $FileType
@@ -44,7 +46,7 @@ foreach ($URL in $URLList) {
 
 
     if($AdShuffle){
-        $AdCount += 1
+        
     }
     else{
         $MediaCount += 1
@@ -74,11 +76,12 @@ foreach ($URL in $URLList) {
     '
     Renames each file and moves to parent folder (non-temp folder)
     '   
+        $AdCount += 1
         if($AdShuffle){
             $newFileName = $file.name
         }
         else{
-            $newFileName = "$current4$current3$current2$($current1)_$($FileType)_$($file.Name)"
+            $newFileName = "$current4$current3$current2$($current1)0_$($FileType)_$($file.Name)"
         }
 
         #Gets rid of all non-normal characters in order to not bug out 3rd party tools
@@ -92,7 +95,7 @@ foreach ($URL in $URLList) {
         
 
         #Converts .wav file to a standard format to ensure proper concatenation later
-        $newerFileName = $newFileName.Substring(0, 10) + "s" + $newFileName.Substring(10)
+        $newerFileName = $newFileName.Substring(0, 5) + "s" + $newFileName.Substring(5)
         ffmpeg -i $newFileName -ar 44100 -ac 2 -sample_fmt s16 $newerFileName
         rm $newFilename
 
@@ -102,40 +105,49 @@ foreach ($URL in $URLList) {
 }
 
 if($AdShuffle){
-    #Renames file name to account for ordering
-    $current1 = 0
-    $current2 = 0
-    $current3 = 0
-    $current4 = 0
-    $files = Get-ChildItem -Path $MediaPath -Filter "*.wav" -File
+    
+    $files = Get-ChildItem -Filter *.wav $MediaPath
     foreach($file in $files){
-        $current1 += [int]($LastMediaCount / $AdCount)
-        Write-Output "LastMediaCount: $LastMediaCount"
-        Write-Output "AdCount: $AdCount"
-        Write-Output "Current1: $current1"
-
-
-        if ($current1 -eq 10) {
-            $current1 = 0
-            $current2 += 1
-        }
-        if ($current2 -eq 10) {
-            $current2 = 0
-            $current3 += 1
-        }
-        if ($current3 -eq 10) {
-            $current3 = 0
-            $current4 += 1
-        }
-        if ($current4 -eq 10) {
-            Write-Output "ERROR: OVER 1000 FILES EXCEEDED (UNSUPPORTED), MAY BE ISSUES WITH ORDERING"
-        }
-        $newFileName = "$current4$current3$current2$($current1)0_$($FileType)_$($file.Name)"
+        $RandNum = Get-Random -Minimum 1000 -Maximum 9999
+        $newFileName = "$($RandNum)$($file.Name)"
         $file | Rename-Item -NewName $newFileName
+    }
+
+    #Renames file name to account for ordering, only if ordering is to be kept
+    if($LastMediaCount -ne 0){
+        $current1 = 0
+        $current2 = 0
+        $current3 = 0
+        $current4 = 0
+        $files = Get-ChildItem -Path $MediaPath -Filter "*.wav" -File
+        foreach($file in $files){
+            $current1 += ($LastMediaCount / $AdCount)
+            Write-Output "LastMediaCount: $LastMediaCount"
+            Write-Output "AdCount: $AdCount"
+            Write-Output "Current1: $current1"
+
+
+            if ([int]$current1 -eq 10) {
+                $current1 = 0
+                $current2 += 1
+            }
+            if ($current2 -eq 10) {
+                $current2 = 0
+                $current3 += 1
+            }
+            if ($current3 -eq 10) {
+                $current3 = 0
+                $current4 += 1
+            }
+            if ($current4 -eq 10) {
+                Write-Output "ERROR: OVER 1000 FILES EXCEEDED (UNSUPPORTED), MAY BE ISSUES WITH ORDERING"
+            }
+            $newFileName = "$current4$current3$current2$([int]$current1)0_$($FileType)_" + $file.Name.Substring(4)
+            $file | Rename-Item -NewName $newFileName
+        }
     }
 }
 cd ..
 cd ..
-if(-not $AdShuffle){
-    Write-Output $MediaCount
-}
+Write-Output $MediaCount
+
